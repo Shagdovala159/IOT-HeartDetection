@@ -6,17 +6,18 @@
 #include <Keypad.h>
 #include <Wire.h>
 #include <ArduinoJson.h>
+
 #define I2CADDR 0x38
 
-String apikey = "JSWC722EXUCIZZTU";  //Write Api Key
-char ssid[] = "!";                   //Name WiFi
-char pass[] = "anelita123";
+String apikey = "";  //Write Api Key
+char ssid[] = "";                   //Name WiFi
+char pass[] = "";
 
 const char *server = "api.thingspeak.com";
 WiFiClient client;
-unsigned long myChannelNumber = 2092697;
-const char *myWriteAPIKey = "M2A3LS02Y5PHPTK0";
-const char *myReadAPIKey = "F4N68KHKINC3LWWX";
+unsigned long myChannelNumber = ;
+const char *myWriteAPIKey = "";
+const char *myReadAPIKey = "";
 
 const byte ROWS = 4;  //four rows
 const byte COLS = 4;  //three columns
@@ -32,7 +33,7 @@ byte colPins[COLS] = { 4, 5, 6, 7 };  //connect to the column pinouts of the key
 TwoWire *jwire = &Wire;               //test passing pointer to keypad lib
 Keypad_I2C kpd(makeKeymap(keys), rowPins, colPins, ROWS, COLS, I2CADDR, PCF8574, jwire);
 
-const int sensor =15;
+const int sensor = 15;
 const int pinBuzzer = 2;
 
 long int beatCount = 0; 
@@ -122,6 +123,8 @@ void keypadEvent(KeypadEvent key) {
         case '#':
           Serial.println("\nRESET");
           kodepasien = "";
+          ESP.restart();
+          break;
       }
   }
 }
@@ -129,7 +132,7 @@ void keypadEvent(KeypadEvent key) {
 void getdata() {
   WiFiClient client;
   HTTPClient http;
-  String address = "http://172.20.10.5/tugas_akhir/webapi/api/API.php?";
+  String address = "http://172.20.10.2/tugas_akhir/webapi/api/API.php?";
   address += "kodepasien=";
   address += kodepasien;
   http.begin(client, address);
@@ -171,7 +174,7 @@ void getdata() {
 void updatedata() {
   WiFiClient client;
   HTTPClient http;
-  String address = "http://172.20.10.5/tugas_akhir/webapi/api/API.php";
+  String address = "http://172.20.10.2/tugas_akhir/webapi/api/API.php";
   http.begin(client, address);
   http.addHeader("Content-Type", "application/json");
   String payload = String("{\"kodepasien\":\"") + String(kodepasien) + String("\",\"detakjantung\":") + String(beatCount) + String("}");
